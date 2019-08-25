@@ -3,13 +3,13 @@ import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/table_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/firebase_database.dart';
 
 
 class ClubModule extends ChangeNotifier{
 
   // Firebase
-  final databaseReference = FirebaseDatabase.instance.reference();
+  // final databaseReference = FirebaseDatabase.instance.reference();
 
   // List<ClubModal> _clubs;
 
