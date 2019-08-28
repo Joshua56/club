@@ -206,6 +206,9 @@ class _TaskState extends State<Task> {
                     case ConnectionState.waiting:
                       return Text('Fetching.......');
                       break;
+                    case ConnectionState.none:
+                      return Text('Check your connection');
+                      break;
                     default:
                     
                     return Column(mainAxisSize: MainAxisSize.min, children: _clubsHolder(clubModule.convertToClubModal(snapshot.data.documents)),);
@@ -241,6 +244,9 @@ class _TaskState extends State<Task> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                       return Text('Fetching.......');
+                      break;
+                      case ConnectionState.none:
+                      return Container();
                       break;
                     default:
                       return Column(
