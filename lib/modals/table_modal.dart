@@ -4,8 +4,10 @@ class TableModal{
   final int minNoChairs;
   final double reserveCostPerChair;
 
+  get map => _map();
+
   // TODO:
-  // shedule
+  // schedule
 
   TableModal({
     this.id,
@@ -13,4 +15,13 @@ class TableModal{
     this.minNoChairs = 1,
     this.reserveCostPerChair = 0.0,
   });
+
+  Map<String, dynamic> _map(){
+    return{
+      'id': id,
+      'maxNoChairs': maxNoChairs,
+      'minNoChairs': minNoChairs,
+      'reserveCostPerChair': reserveCostPerChair
+    };
+  }
 }

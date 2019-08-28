@@ -10,4 +10,14 @@ class ProductModal{
     @required this.name,
     @required this.price
   });
+
+  get map => _map();
+
+  Map<String, dynamic> _map(){
+    return {
+      'id': id,
+      'name': name,
+      'price': price
+    };
+  }
 }

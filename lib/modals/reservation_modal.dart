@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/preoder_modal.dart';
 import 'package:club/modals/table_modal.dart';
@@ -7,15 +8,16 @@ import 'package:flutter/material.dart';
 
 class ReservationModal{
   ReservationState state;
+  final String id;
   final UserModal user;
-  final ClubModal club;
+  final DocumentReference club;
   final TableModal table;
   final int noChairs;
   final DateTime reserveDateTime;
   final DateTime dateTimeBooked;
   final PreoderModal preoderModal;
 
-  get id => _id();
+  get key => _key();
 
   get tableReservationCost => noChairs * table.reserveCostPerChair;
   get preoderCost => preoderModal.totalAmount;
@@ -23,6 +25,7 @@ class ReservationModal{
   get totalCost => calcTotalCost();
 
   get autoCompleteReservation => _autoCompleteState;
+  get map => _map();
 
   set updateState(ReservationState stt){
     state = stt;
@@ -31,6 +34,7 @@ class ReservationModal{
   
   ReservationModal({
     this.state = ReservationState.pending,
+    this.id = '',
     @required this.user,
     @required this.club,
     @required this.table,
@@ -59,8 +63,21 @@ class ReservationModal{
     }
   }
 
-  String _id(){
-    return club.key + user.id.toString() + dateTimeBooked.toString();
+  String _key(){
+    return club.documentID + user.id.toString() + dateTimeBooked.toString();
+  }
+
+  Map<String, dynamic> _map(){
+    DocumentReference _clubRef = Firestore.instance.document('clubs/${club.documentID}');
+    return {
+      'user': user.map,
+      'club': club,
+      'table': table.map,
+      'noChairs': noChairs,
+      'reserveDateTime': reserveDateTime,
+      'dateTimeBooked': dateTimeBooked,
+      'preoderModal': preoderModal.map
+    };
   }
 
 }

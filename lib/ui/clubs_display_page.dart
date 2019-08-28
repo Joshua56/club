@@ -59,12 +59,12 @@ class _ClubsDisplayPageState extends State<ClubsDisplayPage> with SingleTickerPr
                   child: Container(
                     color: Colors.black26,
                     height: MediaQuery.of(context).size.height*.9,
-                    // child: GoogleMap(
-                    //   mapType: MapType.normal,
-                    //   onMapCreated: _onMapCreated,
-                    //   initialCameraPosition: CameraPosition(target: _mapCenter, zoom: 11),
-                    //   markers: clubModule.markers,
-                    // ),
+                    child: GoogleMap(
+                      mapType: MapType.normal,
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(target: _mapCenter, zoom: 11),
+                      markers: clubModule.markers,
+                    ),
                   ),
                 ),
                 // list container

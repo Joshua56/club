@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/preoder_modal.dart';
+import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/reservation_modal.dart';
+import 'package:club/modals/table_modal.dart';
+import 'package:club/modals/user_modal.dart';
 import 'package:club/modules/club_module.dart';
 import 'package:club/modules/user_module.dart';
 import 'package:flutter/material.dart';
@@ -8,66 +12,36 @@ import 'package:flutter/material.dart';
 
 class ReservationModule extends ChangeNotifier{
 
-  // List<ReservationModal> _reservations;
+  // Firebase
+  final databaseReference = Firestore.instance;
+
+  List<ReservationModal> _reservations = [];
 
   // dummy data
 
-  static UserModule _userModule = UserModule();
-  static ClubModule _clubModule = ClubModule();
-
-  static PreoderModal _preoder1 = PreoderModal(
-    id: '1',
-    oderItems: [
-      OderItemModal(product: _clubModule.clubs[0].products[0], quantity: 2),
-      OderItemModal(product: _clubModule.clubs[0].products[2], quantity: 1),
-    ]
-  );
-
-  static PreoderModal _preoder2 = PreoderModal(
-    id: '1',
-    oderItems: [
-      OderItemModal(product: _clubModule.clubs[1].products[1], quantity: 2),
-      OderItemModal(product: _clubModule.clubs[1].products[2], quantity: 2),
-    ]
-  );
-
-  List<ReservationModal> _reservations = [
-    ReservationModal(
-      user: _userModule.users[0],
-      club: _clubModule.clubs[0],
-      table: _clubModule.clubs[0].tables[2],
-      noChairs: 2,
-      dateTimeBooked: DateTime.now(),
-      reserveDateTime: DateTime(2019, 9),
-      preoderModal: _preoder1
-    ),
-    ReservationModal(
-      user: _userModule.users[1],
-      club: _clubModule.clubs[1],
-      table: _clubModule.clubs[1].tables[0],
-      noChairs: 2,
-      dateTimeBooked: DateTime.now(),
-      reserveDateTime: DateTime(2019, 10),
-      preoderModal: _preoder2
-    ),
-  ];
+  
 
   //////////////////////////
   
-  get reservations => (ClubModal res){
-    List<ReservationModal> items = [];
+  // get reservations => (ClubModal res){
+  //   List<ReservationModal> items = [];
 
-    _reservations.forEach((item){
-      if(item.club == res){
-        items.add(item);
-      }
-    });
-    return items;
-  };
+  //   _reservations.forEach((item){
+  //     if(item.club == res){
+  //       items.add(item);
+  //     }
+  //   });
+  //   return items;
+  // };
+
+  get reservations => _reservations;
 
   get resCount => _reservations.length;
+
+
   set addReservation(ReservationModal item){
     _reservations.add(item);
+    createReservation(item);
     notifyListeners();
   }
 
@@ -76,6 +50,10 @@ class ReservationModule extends ChangeNotifier{
     _reservations.removeAt(index);
     notifyListeners();
   }
+
+  get convertToReservationModal => (List<DocumentSnapshot> data){
+    return _convertToReservationModal(data);
+  };
 
   void removeResevation(ClubModal res, int index){
     int i = 0;
@@ -91,7 +69,66 @@ class ReservationModule extends ChangeNotifier{
     });
   }
 
+  void createReservation(ReservationModal reservation) async {
+    DocumentReference ref = await databaseReference.collection("reservations")
+        .add(reservation.map);
+  }
 
+  List<ReservationModal> _convertToReservationModal(List<DocumentSnapshot> data){
+    List<ReservationModal> _reservationModals=[];
+
+    data.forEach((item){
+      UserModal _us = UserModal(
+        id: item.data['user']['id'],
+        username: item.data['user']['username']
+      );
+      
+      TableModal _tb = TableModal(
+        id: item.data['table']['id'],
+        maxNoChairs: item.data['table']['maxNoChairs'],
+        minNoChairs: item.data['table']['minNoChairs'],
+        reserveCostPerChair: item.data['table']['reserveCostPerChair'],
+      );
+
+      List<OderItemModal> _orderItems(){
+        List<OderItemModal> _ls = [];
+        item.data['preoderModal']['orderItems'].forEach((item){
+          _ls.add(
+            OderItemModal(
+              product: ProductModal(
+                id: item['product']['id'],
+                name: item['product']['name'],
+                price: item['product']['price'],
+              ),
+              quantity: item['quantity'],
+            )
+          );
+        });
+        return _ls;
+      }
+
+      PreoderModal _pre = PreoderModal(
+        id: item.data['preoderModal']['id'],
+        orderItems: _orderItems()
+      );
+      
+
+      _reservationModals.add(
+        ReservationModal(
+          id: item.documentID,
+          state: item.data['state'],
+          user: _us,
+          club: item.data['club'],
+          table: _tb,
+          noChairs: item.data['noChairs'],
+          reserveDateTime: DateTime.fromMillisecondsSinceEpoch(item.data['reserveDateTime'].seconds * 1000),
+          dateTimeBooked: DateTime.fromMillisecondsSinceEpoch(item.data['dateTimeBooked'].seconds * 1000),
+          preoderModal: _pre,
+        )
+      );
+    });
+    return _reservationModals;
+  }
 
 
 }

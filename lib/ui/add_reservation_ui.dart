@@ -524,11 +524,11 @@ class _AddReservationUIState extends State<AddReservationUI> {
               // _noChairs
               // _reservationDateTime
               DateTime _dateTimeBooked = DateTime.now();
-              PreoderModal _preoderModal = PreoderModal(oderItems: _productsItemAdded);
+              PreoderModal _preoderModal = PreoderModal(orderItems: _productsItemAdded);
 
               ReservationModal _reservationModal = ReservationModal(
                 user: _user,
-                club: _club,
+                club: _club.ref,
                 table: _table,
                 noChairs: _noChairs,
                 reserveDateTime: _reservationDateTime,

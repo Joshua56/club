@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/table_modal.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +33,12 @@ class ClubModal{
   get totalNoTables => tables.length;
   get key => _key();
   get marker => _marker();
+  get map => _map();
+  get ref => Firestore.instance.document('clubs/$id');
 
 
   String _key(){
-    return position.latitude.toString()+'-' + position.longitude.toString();
+    return position.latitude.toString()+'-' + position.longitude.toString() + name;
   }
 
   Marker _marker (){
@@ -47,6 +50,35 @@ class ClubModal{
         BitmapDescriptor.hueViolet,
       ),
     );
+  }
+
+  Map<String, dynamic> _map(){
+    return {
+      'name': name,
+      'image': image,
+      'position': GeoPoint(position.latitude, position.longitude),
+      'locationLabel': locationLabel,
+      'tables': mapTables(),
+      'products': mapProducts()     
+    };
+  }
+
+  List mapTables(){
+    List<Map<String, dynamic>>  lst=[];
+    tables.forEach((item){
+      lst.add(item.map);
+    });
+
+    return lst;
+  }
+
+  List mapProducts(){
+    List<Map<String, dynamic>>  lst=[];
+    products.forEach((item){
+      lst.add(item.map);
+    });
+
+    return lst;
   }
 
   
