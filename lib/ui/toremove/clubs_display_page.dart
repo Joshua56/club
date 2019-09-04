@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:club/modules/club_module.dart';
 import 'package:club/modules/user_module.dart';
-import 'package:club/ui/clubs_gridview.dart';
+import 'package:club/ui/toremove/clubs_gridview.dart';
 import 'package:club/utils/openable_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,7 +24,7 @@ class _ClubsDisplayPageState extends State<ClubsDisplayPage> with SingleTickerPr
     _mapController.complete(controller);
   }
 
-
+ 
 
   @override
   void initState() {

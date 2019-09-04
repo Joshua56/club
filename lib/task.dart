@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/preoder_modal.dart';
 import 'package:club/modals/product_modal.dart';
@@ -32,7 +33,7 @@ class _TaskState extends State<Task> {
     return ClubModal(
       id: '1',
       name: 'new',
-      image: "assets/images/club1.jpg",
+      image: 'https://images.freeimages.com/images/small-previews/280/clubbing-in-london-1-1519219.jpg',
       position: LatLng(-1.290500, 36.823028),
       locationLabel: "Koinange St, Nairobi",
       tables: [
@@ -89,15 +90,15 @@ class _TaskState extends State<Task> {
       return lst;
     }
 
-    List<Widget> _clubsHolder(clubz){
+    List<Widget> _clubsHolder(List<ClubModal> clubz){
       List<Widget> lst=[];
-      clubz.forEach((item){
+      clubz.forEach((ClubModal item){
         lst.add(
           ListTile(
             onTap: (){
               clubModule.deleteClub = item.id;
             },
-            leading: Image.asset('assets/images/club1.jpg'),
+            leading: Image.network(item.image),
             title: Text(item.name.toString()),
             subtitle: Text(item.position.toString()),
           )

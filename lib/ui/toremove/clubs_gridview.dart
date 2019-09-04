@@ -1,6 +1,6 @@
 
 import 'package:club/modules/club_module.dart';
-import 'package:club/ui/club_item_ui.dart';
+import 'package:club/ui/toremove/club_item_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

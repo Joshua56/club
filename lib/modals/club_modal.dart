@@ -25,7 +25,7 @@ class ClubModal{
     @required this.name,
     this.image,
     this.position,
-    this.locationLabel,
+    this.locationLabel = '',
     this.tables = const[],
     this.products = const [],
   });

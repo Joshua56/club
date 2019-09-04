@@ -1,7 +1,7 @@
 
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modules/club_module.dart';
-import 'package:club/ui/club_detail_page.dart';
+import 'package:club/ui/toremove/club_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

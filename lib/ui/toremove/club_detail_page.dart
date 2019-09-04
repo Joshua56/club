@@ -2,7 +2,7 @@ import 'package:club/modals/club_modal.dart';
 import 'package:club/modules/club_module.dart';
 import 'package:club/modules/reservation_module.dart';
 import 'package:club/modules/user_module.dart';
-import 'package:club/ui/add_reservation_ui.dart';
+import 'package:club/ui/toremove/add_reservation_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
