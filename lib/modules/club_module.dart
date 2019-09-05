@@ -6,59 +6,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
+
 class ClubModule extends ChangeNotifier{
 
   // Firebase
   final databaseReference = Firestore.instance;
 
-  List<ClubModal> _clubs;
+  List<ClubModal> _clubs=[];
+  ClubModal _activeClub = ClubModal(name: '');
 
-  // // with exaples
-  // static List<ProductModal> _productsRezzy = [
-  //   ProductModal(id:'1', name: 'drink 1', price: 200),
-  //   ProductModal(id:'2', name: 'drink 2', price: 340),
-  //   ProductModal(id:'3', name: 'drink 3', price: 600),
-  //   ProductModal(id:'4', name: 'drink 4', price: 800),
-  //   ProductModal(id:'5', name: 'drink 5', price: 1000),
-  // ];
-
-  // static List<ProductModal> _productsResnet50 = [
-  //   ProductModal(id:'1', name: 'drink 1', price: 200),
-  //   ProductModal(id:'2', name: 'drink 2', price: 340),
-  //   ProductModal(id:'3', name: 'food 1', price: 300),
-  //   ProductModal(id:'4', name: 'drink 4', price: 800),
-  //   ProductModal(id:'5', name: 'food 2', price: 650),
-  // ];
-
-  // List<ClubModal> _clubs =[
-  //   ClubModal(
-  //     id: '1',
-  //     name: 'rezzy',
-  //     image: "assets/images/club1.jpg",
-  //     position: LatLng(-1.290500, 36.823028),
-  //     locationLabel: "Koinange St, Nairobi",
-  //     tables: [
-  //       TableModal(id: '1', maxNoChairs: 6, minNoChairs: 3, reserveCostPerChair: 50),
-  //       TableModal(id: '2', maxNoChairs: 4, minNoChairs: 2, reserveCostPerChair: 50),
-  //       TableModal(id: '3', maxNoChairs: 2, reserveCostPerChair: 50),
-  //       TableModal(id: '4', maxNoChairs: 4, minNoChairs: 2, reserveCostPerChair: 50),
-  //     ],
-  //     products: _productsRezzy,
-  //   ),
-  //   ClubModal(
-  //     id: '2',
-  //     name: 'resnet50',
-  //     image: "assets/images/club1.jpg",
-  //     position: LatLng(-1.284486, 36.819134),
-  //     locationLabel: "Koinange St, Nairobi",
-  //     tables: [
-  //       TableModal(id: '2', maxNoChairs: 4, minNoChairs: 2, reserveCostPerChair: 100),
-  //       TableModal(id: '3', maxNoChairs: 2, reserveCostPerChair: 100),
-  //       TableModal(id: '4', maxNoChairs: 4, minNoChairs: 2, reserveCostPerChair: 100),
-  //     ],
-  //     products: _productsResnet50,
-  //   ),
-  // ];
 
   Set<Marker> _markers (){
     final Set<Marker> lst = {};
@@ -68,30 +24,33 @@ class ClubModule extends ChangeNotifier{
     });
     return lst;
   }
-  void _fetchClubs()async{
-    QuerySnapshot _clubsSnapshot = await databaseReference.collection('clubs').getDocuments();
-    setClubs = _convertToClubModal(_clubsSnapshot.documents);
-    
-
-
+  void _fetchClubs(){
+    databaseReference.collection('clubs').getDocuments().then((snapshot){
+      setClubs = _convertToClubModal(snapshot.documents);
+    });
     
     
   }
 
-  Future<ClubModal> _getClub(String id) async{
-    ClubModal club;
-    DocumentSnapshot r = await databaseReference.document('clubs/$id').get();
-    return _convertItemToClubModal(r);
-    // _clubs.forEach((item){
-    //   if(item.id == id){
-    //     club = item;
-    //   }
-    // });
-    // return club;
+  void _fetchClub(String id) {
+    databaseReference.document('clubs/$id').get().then((item){
+      setActiveClub = _convertItemToClubModal(item);
+    });
+  }
+
+  ClubModal _getClub(id){
+    _fetchClub(id);
+    return _activeClub;
   }
 
 
-  get clubs => _clubs;
+   get clubs => _getClubs();
+
+  List<ClubModal> _getClubs(){
+    _fetchClubs();
+    return _clubs;
+  }
+
   get clubsCount => _clubs.length;
   Set<Marker> get markers => _markers();
   get getClub => (id) { return _getClub(id); };
@@ -99,7 +58,7 @@ class ClubModule extends ChangeNotifier{
   get updateProducts => ({List<ProductModal> products, String clubId}) {return _updateProducts(products: products, clubId: clubId); };
 
   get convertToClubModal => (List<DocumentSnapshot> data){
-    _fetchClubs();
+    // _fetchClubs();
     return _convertToClubModal(data);
   };
 
@@ -108,8 +67,14 @@ class ClubModule extends ChangeNotifier{
   //   _restaurant = lst;
   //   notifyListeners();
   // }
-  set setClubs(List<ClubModal> item){
-    _clubs = item;
+  set setClubs(List<ClubModal> items){
+    _clubs = items;
+    notifyListeners();
+  }
+
+  set setActiveClub(ClubModal item){
+    _activeClub = item;
+    notifyListeners();
   }
 
   set addClub(ClubModal club){
@@ -173,7 +138,6 @@ class ClubModule extends ChangeNotifier{
         item.data['tables'].forEach((it){
           _t.add(
             TableModal(
-              id: it['id'],
               label: it['label'],
               maxNoChairs: it['maxNoChairs'],
               minNoChairs: it['minNoChairs'],
@@ -206,10 +170,5 @@ class ClubModule extends ChangeNotifier{
           products: _p,
         );
   }
-
-
-
-
-
 
 }

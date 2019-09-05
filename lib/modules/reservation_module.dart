@@ -16,6 +16,7 @@ class ReservationModule extends ChangeNotifier{
   final databaseReference = Firestore.instance;
 
   List<ReservationModal> _reservations = [];
+  List<ReservationModal> _currenClubReservation = [];
 
   // dummy data
 
@@ -38,9 +39,18 @@ class ReservationModule extends ChangeNotifier{
 
   get resCount => _reservations.length;
 
+  get currenClubReservation => (clubId){
+    fetchClubReservations(clubId);
+    return _currenClubReservation;
+  };
+
+  set setCurrenClubReservation(List<ReservationModal> reserv){
+    _currenClubReservation = reserv;
+    notifyListeners();
+  } 
+
 
   set addReservation(ReservationModal item){
-    _reservations.add(item);
     createReservation(item);
     notifyListeners();
   }
@@ -55,23 +65,22 @@ class ReservationModule extends ChangeNotifier{
     return _convertToReservationModal(data);
   };
 
-  void removeResevation(ClubModal res, int index){
-    int i = 0;
-    int j = 0;
-    _reservations.forEach((item){
-      if(item.club == res){
-        if(j == index){
-          _removeResevation = i;
-        }
-        j++;
-      }
-      i++;
-    });
+  void removeResevation(String id) async{
+    DocumentReference r = await databaseReference.document('reservations/$id');
+    r.delete();
   }
 
   void createReservation(ReservationModal reservation) async {
     DocumentReference ref = await databaseReference.collection("reservations")
         .add(reservation.map);
+  }
+  void fetchClubReservations(String clubId){
+    DocumentReference clubRef = databaseReference.document('clubs/$clubId');
+    Future<QuerySnapshot> ref =  databaseReference.collection("reservations").where('club', isEqualTo: clubRef).getDocuments();
+    ref.then((item){
+      setCurrenClubReservation = _convertToReservationModal(item.documents);
+    });
+
   }
 
   List<ReservationModal> _convertToReservationModal(List<DocumentSnapshot> data){
@@ -79,12 +88,12 @@ class ReservationModule extends ChangeNotifier{
 
     data.forEach((item){
       UserModal _us = UserModal(
-        id: item.data['user']['id'],
-        username: item.data['user']['username']
+        id: '1',
+        username: 'me'
       );
       
       TableModal _tb = TableModal(
-        id: item.data['table']['id'],
+        label: item.data['table']['label'],
         maxNoChairs: item.data['table']['maxNoChairs'],
         minNoChairs: item.data['table']['minNoChairs'],
         reserveCostPerChair: item.data['table']['reserveCostPerChair'],
@@ -96,7 +105,6 @@ class ReservationModule extends ChangeNotifier{
           _ls.add(
             OderItemModal(
               product: ProductModal(
-                id: item['product']['id'],
                 name: item['product']['name'],
                 price: item['product']['price'],
               ),
@@ -111,6 +119,10 @@ class ReservationModule extends ChangeNotifier{
         id: item.data['preoderModal']['id'],
         orderItems: _orderItems()
       );
+
+      DateTime _convertToDateTime(dt){
+        return dt == null ? null : DateTime.fromMillisecondsSinceEpoch(dt.seconds*1000);
+      }
       
 
       _reservationModals.add(
@@ -121,8 +133,8 @@ class ReservationModule extends ChangeNotifier{
           club: item.data['club'],
           table: _tb,
           noChairs: item.data['noChairs'],
-          reserveDateTime: DateTime.fromMillisecondsSinceEpoch(item.data['reserveDateTime'].seconds * 1000),
-          dateTimeBooked: DateTime.fromMillisecondsSinceEpoch(item.data['dateTimeBooked'].seconds * 1000),
+          reserveDateTime: _convertToDateTime(item.data['reserveDateTime']),
+          dateTimeBooked: _convertToDateTime(item.data['dateTimeBooked']),
           preoderModal: _pre,
         )
       );

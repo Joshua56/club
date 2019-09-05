@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/product_modal.dart';
+import 'package:club/modals/reservation_modal.dart';
 import 'package:club/modals/table_modal.dart';
 import 'package:club/modules/club_module.dart';
+import 'package:club/modules/reservation_module.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +20,13 @@ class ClubDetail extends StatefulWidget {
 class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateMixin{
 
 
-  ClubModal _club = ClubModal(name: '', position: LatLng(0,0), locationLabel: '');
+  // ClubModal _club = ClubModal(name: '', position: LatLng(0,0), locationLabel: '');
   TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   @override
@@ -35,16 +37,15 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      builder: (context) => ClubModule(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(builder: (context) => ClubModule(),),
+        ChangeNotifierProvider(builder: (context) => ReservationModule(),),
+      ],
       child: Consumer<ClubModule>(
         builder: (context, clubModule, _){
-          Future<ClubModal> _clubFuture = clubModule.getClub(widget.clubId);
-          _clubFuture.then((value){
-           setState(() {
-              _club = value;
-           });
-          });
+          ClubModal _club = clubModule.getClub(widget.clubId);
+         
           return Scaffold(
             appBar: AppBar(
               title: Text(_club.name),
@@ -53,6 +54,7 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
                 tabs: <Widget>[
                   Tab(text: 'Tables',),
                   Tab(text: 'Products',),
+                  Tab(text: 'Reservations',),
                 ],
               ),
             ),
@@ -61,6 +63,7 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
               children: <Widget>[
                 ClubTables(widget.clubId),
                 ClubProducts(widget.clubId),
+                ClubReservations(widget.clubId),
               ],
             ),
           );
@@ -87,7 +90,6 @@ class _ClubTablesState extends State<ClubTables> {
 
   TextEditingController _reserveCostPerChairController;
 
-  ClubModal _club;
   List<TableModal> _tables =[];
 
   @override
@@ -112,13 +114,8 @@ class _ClubTablesState extends State<ClubTables> {
   Widget build(BuildContext context) {
     return Consumer<ClubModule>(
       builder: (context, clubModule, _){
-        Future<ClubModal> _clubFuture = clubModule.getClub(widget.clubId);
-          _clubFuture.then((value){
-           setState(() {
-              _club = value;
-              _tables= _club.tables;
-          });
-          });
+        ClubModal _club = clubModule.getClub(widget.clubId);
+          _tables= _club.tables;
         return Scaffold(
         floatingActionButton: CircleAvatar(
           child: IconButton(
@@ -220,7 +217,6 @@ class _ClubProductsState extends State<ClubProducts> {
 
   TextEditingController _priceController;
 
-  ClubModal _club;
   List<ProductModal> _products =[];
 
   @override
@@ -241,13 +237,9 @@ class _ClubProductsState extends State<ClubProducts> {
   Widget build(BuildContext context) {
     return Consumer<ClubModule>(
       builder: (context, clubModule, _){
-        Future<ClubModal> _clubFuture = clubModule.getClub(widget.clubId);
-          _clubFuture.then((value){
-           setState(() {
-              _club = value;
+        ClubModal _club = clubModule.getClub(widget.clubId);
               _products= _club.products;
-          });
-          });
+          
         return Scaffold(
         floatingActionButton: CircleAvatar(
           child: IconButton(
@@ -320,3 +312,48 @@ class _ClubProductsState extends State<ClubProducts> {
   }
 }
 
+class ClubReservations extends StatefulWidget {
+  final String clubId;
+
+  ClubReservations(this.clubId);
+  @override
+  _ClubReservationsState createState() => _ClubReservationsState();
+}
+
+class _ClubReservationsState extends State<ClubReservations> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ReservationModule>(
+      builder: (context, reservationModule, _){
+        List<ReservationModal> _reservations = reservationModule.currenClubReservation(widget.clubId);
+
+        return ListView.builder(
+          itemCount: _reservations.length,
+          itemBuilder: (BuildContext context, int index){
+            Row _row(key, value){
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(key.toString()),
+                  Text(value.toString()),
+                ],
+              );
+            }
+            return Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _row('User', _reservations[index].user.username),
+                  _row('DateBooked', _reservations[index].dateTimeBooked),
+                  _row('ResercationDate', _reservations[index].reserveDateTime),
+                  _row('Table', _reservations[index].table.label),
+                  _row('No. of Chairs', _reservations[index].noChairs),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}

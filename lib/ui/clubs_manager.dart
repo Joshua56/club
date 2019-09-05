@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modules/club_module.dart';
+import 'package:club/modules/reservation_module.dart';
 import 'package:club/ui/club_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,6 +22,7 @@ class ClubsManager extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       final clubModule = Provider.of<ClubModule>(context);
+      final reservationModule  = Provider.of<ReservationModule>(context);
       List<Widget> _clubsHolder(List<ClubModal> clubz){
       List<Widget> lst=[];
       clubz.forEach((ClubModal item){
@@ -54,7 +56,7 @@ class ClubsManager extends StatelessWidget {
               default:
 
               
-              return Column(mainAxisSize: MainAxisSize.min, children: _clubsHolder(clubModule.convertToClubModal(snapshot.data.documents)),);
+              return SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: _clubsHolder(clubModule.convertToClubModal(snapshot.data.documents)),));
             }
             
           },
