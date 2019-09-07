@@ -128,7 +128,7 @@ class ReservationModule extends ChangeNotifier{
       _reservationModals.add(
         ReservationModal(
           id: item.documentID,
-          state: item.data['state'],
+          // state: item.data['state'],
           user: _us,
           club: item.data['club'],
           table: _tb,
