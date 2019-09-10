@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/table_modal.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -118,6 +122,20 @@ class ClubModule extends ChangeNotifier{
     });
 
     databaseReference.document('clubs/$clubId').updateData({'products': _productMaps});
+  }
+
+  Future<String> uploadImage(File image) async {
+    String _filePath = image.path;
+    String _extension = _filePath.split('/').last.split('.').last;
+    String _label = _filePath.split('/').last.split('.')[0];
+    String _fileName = Random().nextInt(10000).toString()+_label+'.$_extension';
+    final StorageReference _storageRef = FirebaseStorage.instance.ref().child(_fileName);
+
+    final StorageUploadTask uploadTask = _storageRef.putFile(image,);
+    final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+    final String _url = (await downloadUrl.ref.getDownloadURL());
+    return _url;
+
   }
 
   List<ClubModal> _convertToClubModal(List<DocumentSnapshot> data){
