@@ -11,6 +11,7 @@ class ClubModal{
   final String image;
   final List<TableModal> tables;
   final List<ProductModal> products;
+  final List<String> gallery;
   final LatLng position;
   final String locationLabel;
 
@@ -24,6 +25,7 @@ class ClubModal{
     this.id = '1',
     @required this.name,
     this.image,
+    this.gallery = const [],
     this.position,
     this.locationLabel = '',
     this.tables = const[],
@@ -56,6 +58,7 @@ class ClubModal{
     return {
       'name': name,
       'image': image,
+      'gallery': gallery,
       'position': GeoPoint(position.latitude, position.longitude),
       'locationLabel': locationLabel,
       'tables': mapTables(),

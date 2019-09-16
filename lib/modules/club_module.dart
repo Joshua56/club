@@ -60,6 +60,7 @@ class ClubModule extends ChangeNotifier{
   get getClub => (id) { return _getClub(id); };
   get updateTables => ({List<TableModal> tables, String clubId}) {return _updateTables(tables: tables, clubId: clubId); };
   get updateProducts => ({List<ProductModal> products, String clubId}) {return _updateProducts(products: products, clubId: clubId); };
+  get updateGallery => ({List<String> gallery, String clubId}) {return _updateGallery(gallery: gallery, clubId: clubId); };
 
   get convertToClubModal => (List<DocumentSnapshot> data){
     // _fetchClubs();
@@ -124,6 +125,11 @@ class ClubModule extends ChangeNotifier{
     databaseReference.document('clubs/$clubId').updateData({'products': _productMaps});
   }
 
+  void _updateGallery({List<String> gallery, String clubId}) {
+
+    databaseReference.document('clubs/$clubId').updateData({'gallery': gallery});
+  }
+
   Future<String> uploadImage(File image) async {
     String _filePath = image.path;
     String _extension = _filePath.split('/').last.split('.').last;
@@ -151,6 +157,7 @@ class ClubModule extends ChangeNotifier{
   ClubModal _convertItemToClubModal(item){
     List<TableModal> _t=[];
       List<ProductModal> _p=[];
+      List<String> _g = [];
 
       if(item.data['tables'] != null){
         item.data['tables'].forEach((it){
@@ -171,17 +178,26 @@ class ClubModule extends ChangeNotifier{
             ProductModal(
               id: p['id'],
               name: p['name'],
-              price: p['price']
+              price: p['price'],
+              image: p['image']
             )
           );
         });
       }
+
+      if(item.data['gallery'] != null){
+        item.data['gallery'].forEach((g){
+          _g.add(g);
+        });
+      }
+
 
       return
         ClubModal(
           id: item.documentID,
           name: item.data['name'],
           image: item.data['image'],
+          gallery: _g,
           position: LatLng(item.data['position'].latitude, item.data['position'].longitude),
           locationLabel: item.data['locationLabel'],
           tables: _t,
