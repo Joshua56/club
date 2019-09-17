@@ -445,14 +445,8 @@ class _ClubGalleryState extends State<ClubGallery> {
                   height: 170,
                   width: 170,
                   child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // product image
-                        _gallery[index] == null ? Container() : Image.network(_gallery[index],  fit: BoxFit.cover,),
+                    child: _gallery[index] == null ? Container() : Image.network(_gallery[index],  fit: BoxFit.cover,),
                         
-                      ],
-                    ),
                   ),
                 );
             },

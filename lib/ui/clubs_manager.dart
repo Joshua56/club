@@ -32,7 +32,7 @@ class ClubsManager extends StatelessWidget {
             onLongPress: (){
               clubModule.deleteClub = item.id;
             },
-            leading: Image.network(item.image),
+            leading: item.image == null ? SizedBox() : Image.network(item.image, fit: BoxFit.cover,),
             title: Text(item.name.toString()),
             subtitle: Text(item.position.toString()),
           )

@@ -21,6 +21,7 @@ class ClubModule extends ChangeNotifier{
 
 
   Set<Marker> _markers (){
+    _fetchClubs();
     final Set<Marker> lst = {};
 
     _clubs.forEach((item){
@@ -131,15 +132,18 @@ class ClubModule extends ChangeNotifier{
   }
 
   Future<String> uploadImage(File image) async {
-    String _filePath = image.path;
-    String _extension = _filePath.split('/').last.split('.').last;
-    String _label = _filePath.split('/').last.split('.')[0];
-    String _fileName = Random().nextInt(10000).toString()+_label+'.$_extension';
-    final StorageReference _storageRef = FirebaseStorage.instance.ref().child(_fileName);
+    String _url;
+    if(image != null){
+      String _filePath = image.path;
+      String _extension = _filePath.split('/').last.split('.').last;
+      String _label = _filePath.split('/').last.split('.')[0];
+      String _fileName = Random().nextInt(10000).toString()+_label+'.$_extension';
+      final StorageReference _storageRef = FirebaseStorage.instance.ref().child(_fileName);
 
-    final StorageUploadTask uploadTask = _storageRef.putFile(image,);
-    final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
-    final String _url = (await downloadUrl.ref.getDownloadURL());
+      final StorageUploadTask uploadTask = _storageRef.putFile(image,);
+      final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+      _url = (await downloadUrl.ref.getDownloadURL());
+    }
     return _url;
 
   }
