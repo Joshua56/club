@@ -122,7 +122,6 @@ class _ClubCreateState extends State<ClubCreate> {
                     ],
                   ),
 
-
                   SizedBox(height: 12,),
                   MaterialButton(
                     color: Colors.blue,

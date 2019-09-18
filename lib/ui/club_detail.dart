@@ -504,6 +504,52 @@ class _ClubReservationsState extends State<ClubReservations> {
   }
 }
 
+
+class ClubEvents extends StatefulWidget {
+  final String clubId;
+
+  ClubEvents(this.clubId);
+  @override
+  _ClubEventsState createState() => _ClubEventsState();
+}
+
+class _ClubEventsState extends State<ClubEvents> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<EventModule>(
+      builder: (context, eventsModule, _){
+        List<EventModule> _events = reservationModule.currenClubEvents(widget.clubId);
+
+        return ListView.builder(
+          itemCount: _events.length,
+          itemBuilder: (BuildContext context, int index){
+            Row _row(key, value){
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(key.toString()),
+                  Text(value.toString()),
+                ],
+              );
+            }
+            return Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _row('Title', _events[index].title),
+                  _row('Club', _events[index].club.toString()),
+                  _row('date', _events[index].date.toString()),
+                  _row('image', _events[index].image),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
 Drawer clubDetailDrawer (context, clubId,){
   return Drawer(
     child: Column(
@@ -520,6 +566,13 @@ Drawer clubDetailDrawer (context, clubId,){
             Navigator.push(context, MaterialPageRoute(builder: (context) => ClubTables(clubId)));
           },
           title: Text('Tables'),
+        ),
+        Divider(),
+        ListTile(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ClubEvents(clubId)));
+          },
+          title: Text('Events'),
         ),
         Divider(),
         ListTile(
