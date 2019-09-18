@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:club/modals/club_modal.dart';
+import 'package:club/modals/event_model.dart';
+import 'package:club/modules/club_module.dart';
+import 'package:club/modules/event_module.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
@@ -7,7 +11,8 @@ import 'package:provider/provider.dart';
 
 class EventCreate extends StatefulWidget {
   final String clubId;
-  EventCreate({this.clubId})
+  EventCreate({this.clubId});
+  
   @override
   _EventCreateState createState() => _EventCreateState();
 }
@@ -85,8 +90,10 @@ class _EventCreateState extends State<EventCreate> {
                       // 
                       // upload image first
                       eventModule.uploadImage(_imageChoosen).then((url){
+
+                        ClubModule _clubModule = Provider.of<ClubModule>(context);
                       
-                      ClubModal _club = clubModule.getClub(widget.clubId)
+                        ClubModal _club = _clubModule.getClub(widget.clubId);
 
                         EventModel _newEvent = EventModel(
                           title: _eventTitleController.text,
@@ -94,7 +101,7 @@ class _EventCreateState extends State<EventCreate> {
                           date: _date,
                           image: url,
                           club: _club.ref
-                        )
+                        );
 
                         eventModule.addEvent = _newEvent;
 

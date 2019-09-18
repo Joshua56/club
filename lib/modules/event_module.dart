@@ -1,3 +1,11 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club/modals/event_model.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+
 class EventModule extends ChangeNotifier{
 
   // Firebase
@@ -7,10 +15,15 @@ class EventModule extends ChangeNotifier{
 
   List<EventModel> get events => _events;
 
-  List<EventModel> get currenClubEvents => (clubId) fetchClubEvents(clubId);
+  get currenClubEvents => (clubId) { 
+    fetchClubEvents(clubId);
+    return _events;};
+
+  set setEvents(List<EventModel> ev){
+    _events = ev;
+  }
 
   set addEvent (EventModel ev){
-    // _events.add(ev);
     createEvent(ev);
   }
 
@@ -39,13 +52,14 @@ class EventModule extends ChangeNotifier{
         EventModel(
           id: item.documentID,
           club: item.data['club'],
-          title: item.data['title']
+          title: item.data['title'],
           description: item.data['description'],
           image: item.data['image'],
           date: _convertToDateTime(item.data['date']),
         )
       );
     });
+    return _eventsModel;
   }
 
   Future<String> uploadImage(File image) async {

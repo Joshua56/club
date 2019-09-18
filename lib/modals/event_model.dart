@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class EventModel{
   final String id;
   final DocumentReference club;
@@ -15,7 +17,7 @@ class EventModel{
     this.date
   });
 
-  Map<String, dynamic> map => _map();
+  Map<String, dynamic> get map => _map();
 
   _map(){
     return{
@@ -24,6 +26,6 @@ class EventModel{
       'description': description,
       'image': image,
       'date': date,
-    }
+    };
   }
 }

@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
+import 'package:club/modals/event_model.dart';
 import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/reservation_modal.dart';
 import 'package:club/modals/table_modal.dart';
 import 'package:club/modules/club_module.dart';
+import 'package:club/modules/event_module.dart';
 import 'package:club/modules/reservation_module.dart';
+import 'package:club/ui/create_event.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -518,32 +521,47 @@ class _ClubEventsState extends State<ClubEvents> {
   Widget build(BuildContext context) {
     return Consumer<EventModule>(
       builder: (context, eventsModule, _){
-        List<EventModule> _events = reservationModule.currenClubEvents(widget.clubId);
+        List<EventModel> _events = eventsModule.currenClubEvents(widget.clubId);
 
-        return ListView.builder(
-          itemCount: _events.length,
-          itemBuilder: (BuildContext context, int index){
-            Row _row(key, value){
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(key.toString()),
-                  Text(value.toString()),
-                ],
+        return Scaffold(
+          body: ListView.builder(
+            itemCount: _events.length,
+            itemBuilder: (BuildContext context, int index){
+              Row _row(key, value){
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(key.toString()),
+                    Text(value.toString()),
+                  ],
+                );
+              }
+              return Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _row('Title', _events[index].title),
+                    _row('Club', _events[index].club.toString()),
+                    _row('date', _events[index].date.toString()),
+                    _row('image', _events[index].image),
+                  ],
+                ),
               );
-            }
-            return Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  _row('Title', _events[index].title),
-                  _row('Club', _events[index].club.toString()),
-                  _row('date', _events[index].date.toString()),
-                  _row('image', _events[index].image),
-                ],
+            },
+          ),
+          floatingActionButton: CircleAvatar(
+              child: IconButton(
+                onPressed: (){
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context){
+                      return EventCreate(clubId: widget.clubId,);
+                    }
+                  );
+                },
+                icon: Icon(Icons.add),
               ),
-            );
-          },
+            ),  
         );
       },
     );
