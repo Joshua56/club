@@ -21,6 +21,7 @@ class EventModule extends ChangeNotifier{
 
   set setEvents(List<EventModel> ev){
     _events = ev;
+    notifyListeners();
   }
 
   set addEvent (EventModel ev){
@@ -55,7 +56,7 @@ class EventModule extends ChangeNotifier{
           title: item.data['title'],
           description: item.data['description'],
           image: item.data['image'],
-          date: _convertToDateTime(item.data['date']),
+          date: item.data['date'],
         )
       );
     });

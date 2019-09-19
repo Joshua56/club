@@ -28,8 +28,11 @@ class _EventCreateState extends State<EventCreate> {
   @override
   Widget build(BuildContext context) {
     
-    return ChangeNotifierProvider<EventModule>(
-      builder: (context) => EventModule(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<EventModule>(builder: (context) => EventModule()),
+        ChangeNotifierProvider<ClubModule>(builder: (context) => ClubModule()),
+      ],
       child: Consumer<EventModule>(
         builder: (context, eventModule, _){
           return KeyboardAvoider(
@@ -93,17 +96,19 @@ class _EventCreateState extends State<EventCreate> {
 
                         ClubModule _clubModule = Provider.of<ClubModule>(context);
                       
-                        ClubModal _club = _clubModule.getClub(widget.clubId);
+                        Future<ClubModal> _clubFuture = _clubModule.futureClub(widget.clubId);
 
-                        EventModel _newEvent = EventModel(
-                          title: _eventTitleController.text,
-                          description: _eventDescriptionController.text,
-                          date: _date,
-                          image: url,
-                          club: _club.ref
-                        );
+                        _clubFuture.then((_club){
+                          EventModel _newEvent = EventModel(
+                            title: _eventTitleController.text,
+                            description: _eventDescriptionController.text,
+                            date: _date,
+                            image: url,
+                            club: _club.ref
+                          );
 
-                        eventModule.addEvent = _newEvent;
+                          eventModule.addEvent = _newEvent;
+                        });
 
                       });
 

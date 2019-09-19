@@ -43,10 +43,23 @@ class ClubModule extends ChangeNotifier{
     });
   }
 
-  ClubModal _getClub(id){
+  ClubModal _getClub(id) {
+    // ClubModal _c;
     _fetchClub(id);
+    // databaseReference.document('clubs/$id').get().then((item){
+    //   _c = _convertItemToClubModal(item);
+    // });
     return _activeClub;
   }
+
+  Future<ClubModal> _futureClub(id) async{
+    ClubModal _c;
+    DocumentSnapshot ref =  await databaseReference.document('clubs/$id').get();
+    return  _convertItemToClubModal(ref);
+
+  }
+
+  get futureClub => (id) {return _futureClub(id);};
 
 
    get clubs => _getClubs();

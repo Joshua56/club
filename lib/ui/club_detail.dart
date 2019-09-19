@@ -519,51 +519,56 @@ class ClubEvents extends StatefulWidget {
 class _ClubEventsState extends State<ClubEvents> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<EventModule>(
-      builder: (context, eventsModule, _){
-        List<EventModel> _events = eventsModule.currenClubEvents(widget.clubId);
+    return ChangeNotifierProvider(
+      builder: (context) => EventModule(),
+      child: Consumer<EventModule>(
+        builder: (context, eventsModule, _){
+          List<EventModel> _events = eventsModule.currenClubEvents(widget.clubId);
 
-        return Scaffold(
-          body: ListView.builder(
-            itemCount: _events.length,
-            itemBuilder: (BuildContext context, int index){
-              Row _row(key, value){
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(key.toString()),
-                    Text(value.toString()),
-                  ],
-                );
-              }
-              return Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    _row('Title', _events[index].title),
-                    _row('Club', _events[index].club.toString()),
-                    _row('date', _events[index].date.toString()),
-                    _row('image', _events[index].image),
-                  ],
-                ),
-              );
-            },
-          ),
-          floatingActionButton: CircleAvatar(
-              child: IconButton(
-                onPressed: (){
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context){
-                      return EventCreate(clubId: widget.clubId,);
-                    }
+          return Scaffold(
+            appBar: AppBar(title: Text('Events'),),
+            drawer: clubDetailDrawer(context, widget.clubId),
+            body: ListView.builder(
+              itemCount: _events.length,
+              itemBuilder: (BuildContext context, int index){
+                Row _row(key, value){
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(key.toString()),
+                      Text(value.toString()),
+                    ],
                   );
-                },
-                icon: Icon(Icons.add),
-              ),
-            ),  
-        );
-      },
+                }
+                return Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _row('Title', _events[index].title),
+                      _row('Club', _events[index].club.toString()),
+                      _row('date', _events[index].date.toString()),
+                      _row('image', _events[index].image.toString()),
+                    ],
+                  ),
+                );
+              },
+            ),
+            floatingActionButton: CircleAvatar(
+                child: IconButton(
+                  onPressed: (){
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context){
+                        return EventCreate(clubId: widget.clubId,);
+                      }
+                    );
+                  },
+                  icon: Icon(Icons.add),
+                ),
+              ),  
+          );
+        },
+      ),
     );
   }
 }
