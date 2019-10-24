@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/event_model.dart';
 import 'package:club/modals/product_modal.dart';
@@ -11,7 +10,6 @@ import 'package:club/modules/event_module.dart';
 import 'package:club/modules/reservation_module.dart';
 import 'package:club/ui/create_event.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +30,7 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 1);
+    _tabController = TabController(vsync: this, length: 4);
   }
 
   @override
@@ -58,9 +56,10 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
               bottom: TabBar(
                 controller: _tabController,
                 tabs: <Widget>[
-                  // Tab(text: 'Tables',),
-                  // Tab(text: 'Products',),
                   Tab(text: 'Reservations',),
+                  Tab(text: 'Events',),
+                  Tab(text: 'Gallery',),
+                  Tab(text: 'Info',),
                 ],
               ),
             ),
@@ -68,10 +67,12 @@ class _ClubDetailState extends State<ClubDetail> with SingleTickerProviderStateM
             // body: ClubReservations(widget.clubId),
             body: TabBarView(
               controller: _tabController,
-              children: <Widget>[
-                // ClubTables(widget.clubId),
-                // ClubProducts(widget.clubId),
+              children: <Widget>[ 
                 ClubReservations(widget.clubId),
+                ClubEvents(widget.clubId),
+                ClubGallery(widget.clubId),
+                // TODO: create info page
+                ClubInfo(widget.clubId),
               ],
             ),
           );
@@ -387,8 +388,8 @@ class _ClubGalleryState extends State<ClubGallery> {
           _club.gallery == null ? _gallery = <String>[] : _gallery = _club.gallery;
             
           return Scaffold(
-            appBar: AppBar(title: Text("Gallery"),),
-            drawer: clubDetailDrawer(context, widget.clubId),
+            // appBar: AppBar(title: Text("Gallery"),),
+            // drawer: clubDetailDrawer(context, widget.clubId),
             floatingActionButton: CircleAvatar(
               child: IconButton(
                 onPressed: (){
@@ -526,8 +527,8 @@ class _ClubEventsState extends State<ClubEvents> {
           List<EventModel> _events = eventsModule.currenClubEvents(widget.clubId);
 
           return Scaffold(
-            appBar: AppBar(title: Text('Events'),),
-            drawer: clubDetailDrawer(context, widget.clubId),
+            // appBar: AppBar(title: Text('Events'),),
+            // drawer: clubDetailDrawer(context, widget.clubId),
             body: ListView.builder(
               itemCount: _events.length,
               itemBuilder: (BuildContext context, int index){
@@ -573,6 +574,25 @@ class _ClubEventsState extends State<ClubEvents> {
   }
 }
 
+// TODO: create info page
+class ClubInfo extends StatefulWidget {
+  final String clubId;
+
+  ClubInfo(this.clubId);
+  @override
+  _ClubInfoState createState() => _ClubInfoState();
+}
+
+class _ClubInfoState extends State<ClubInfo> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+} 
+
 Drawer clubDetailDrawer (context, clubId,){
   return Drawer(
     child: Column(
@@ -591,21 +611,22 @@ Drawer clubDetailDrawer (context, clubId,){
           title: Text('Tables'),
         ),
         Divider(),
-        ListTile(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ClubEvents(clubId)));
-          },
-          title: Text('Events'),
-        ),
-        Divider(),
-        ListTile(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ClubGallery(clubId)));
-          },
-          title: Text('Gallery'),
-        ),
-        Divider(),
+        // ListTile(
+        //   onTap: (){
+        //     Navigator.push(context, MaterialPageRoute(builder: (context) => ClubEvents(clubId)));
+        //   },
+        //   title: Text('Events'),
+        // ),
+        // Divider(),
+        // ListTile(
+        //   onTap: (){
+        //     Navigator.push(context, MaterialPageRoute(builder: (context) => ClubGallery(clubId)));
+        //   },
+        //   title: Text('Gallery'),
+        // ),
+        // Divider(),
       ],
     ),
   );
 }
+

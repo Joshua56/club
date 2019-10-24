@@ -133,8 +133,8 @@ class ReservationModule extends ChangeNotifier{
           club: item.data['club'],
           table: _tb,
           noChairs: item.data['noChairs'],
-          reserveDateTime: _convertToDateTime(item.data['reserveDateTime']),
-          dateTimeBooked: _convertToDateTime(item.data['dateTimeBooked']),
+          reserveDateTime: item.data['reserveDateTime'],
+          dateTimeBooked: item.data['dateTimeBooked'],
           preoderModal: _pre,
         )
       );
