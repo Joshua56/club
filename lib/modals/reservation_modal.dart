@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/preoder_modal.dart';
 import 'package:club/modals/table_modal.dart';
-import 'package:club/modals/user_modal.dart';
 import 'package:flutter/material.dart';
 
 
 class ReservationModal{
   ReservationState state;
   final String id;
-  final UserModal user;
+  final String user;
   final DocumentReference club;
   final TableModal table;
   final int noChairs;
@@ -64,13 +62,13 @@ class ReservationModal{
   }
 
   String _key(){
-    return club.documentID + user.id.toString() + dateTimeBooked.toString();
+    return club.documentID + user.toString() + dateTimeBooked.toString();
   }
 
   Map<String, dynamic> _map(){
     DocumentReference _clubRef = Firestore.instance.document('clubs/${club.documentID}');
     return {
-      'user': user.map,
+      'user': user,
       'club': club,
       'table': table.map,
       'noChairs': noChairs,

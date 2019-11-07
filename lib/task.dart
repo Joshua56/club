@@ -118,7 +118,7 @@ class _TaskState extends State<Task> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text('User'),
-                    Text(item.user.username.toString()),
+                    Text(item.user.toString()),
                   ],
                 ),
                 Row(

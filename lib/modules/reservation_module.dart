@@ -87,11 +87,7 @@ class ReservationModule extends ChangeNotifier{
     List<ReservationModal> _reservationModals=[];
 
     data.forEach((item){
-      UserModal _us = UserModal(
-        id: '1',
-        username: 'me'
-      );
-      
+
       TableModal _tb = TableModal(
         label: item.data['table']['label'],
         maxNoChairs: item.data['table']['maxNoChairs'],
@@ -129,7 +125,7 @@ class ReservationModule extends ChangeNotifier{
         ReservationModal(
           id: item.documentID,
           // state: item.data['state'],
-          user: _us,
+          user: item.data['user'],
           club: item.data['club'],
           table: _tb,
           noChairs: item.data['noChairs'],

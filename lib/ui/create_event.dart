@@ -89,14 +89,15 @@ class _EventCreateState extends State<EventCreate> {
                     minWidth: 300,
                     child: Text("Create"),
                     onPressed: (){
-                      
+                      ClubModule _clubModule = Provider.of<ClubModule>(context);
+                      Future<ClubModal> _clubFuture = _clubModule.futureClub(widget.clubId);
                       // 
                       // upload image first
                       eventModule.uploadImage(_imageChoosen).then((url){
 
-                        ClubModule _clubModule = Provider.of<ClubModule>(context);
+                        
                       
-                        Future<ClubModal> _clubFuture = _clubModule.futureClub(widget.clubId);
+                        
 
                         _clubFuture.then((_club){
                           EventModel _newEvent = EventModel(

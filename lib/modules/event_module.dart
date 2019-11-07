@@ -39,7 +39,7 @@ class EventModule extends ChangeNotifier{
 
   void createEvent(EventModel ev) async {
     DocumentReference ref = await databaseReference.collection("events")
-        .add(ev.map);
+        .add(ev.map);                    
   }
 
   DateTime _convertToDateTime(dt){

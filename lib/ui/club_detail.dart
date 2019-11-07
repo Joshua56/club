@@ -493,7 +493,7 @@ class _ClubReservationsState extends State<ClubReservations> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  _row('User', _reservations[index].user.username),
+                  _row('User', _reservations[index].user),
                   _row('DateBooked', _reservations[index].dateTimeBooked),
                   _row('ResercationDate', _reservations[index].reserveDateTime),
                   _row('Table', _reservations[index].table.label),
@@ -532,23 +532,16 @@ class _ClubEventsState extends State<ClubEvents> {
             body: ListView.builder(
               itemCount: _events.length,
               itemBuilder: (BuildContext context, int index){
-                Row _row(key, value){
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(key.toString()),
-                      Text(value.toString()),
-                    ],
-                  );
-                }
+                
                 return Card(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      _row('Title', _events[index].title),
-                      _row('Club', _events[index].club.toString()),
-                      _row('date', _events[index].date.toString()),
-                      _row('image', _events[index].image.toString()),
+                      Text(_events[index].title),
+                      Image.network( _events[index].image.toString(), height: 200, width: MediaQuery.of(context).size.width - 30, fit: BoxFit.fitWidth,),
+                      SizedBox(height: 5,),
+                      Text(_events[index].description),
+                      SizedBox(height: 15,),
                     ],
                   ),
                 );
