@@ -14,6 +14,7 @@ class ClubModal{
   final List<String> gallery;
   final LatLng position;
   final String locationLabel;
+  List users;
 
 
   // TODO: 
@@ -30,6 +31,7 @@ class ClubModal{
     this.locationLabel = '',
     this.tables = const[],
     this.products = const [],
+    this.users = const [],
   });
 
   get totalNoTables => tables.length;
@@ -62,7 +64,8 @@ class ClubModal{
       'position': GeoPoint(position.latitude, position.longitude),
       'locationLabel': locationLabel,
       'tables': mapTables(),
-      'products': mapProducts()     
+      'products': mapProducts(),
+      'users': users   
     };
   }
 

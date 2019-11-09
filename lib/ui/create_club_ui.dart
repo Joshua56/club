@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:club/auth/authentication.dart';
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modules/club_module.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +26,13 @@ class _ClubCreateState extends State<ClubCreate> {
   TextEditingController _clubLatitudeController = TextEditingController();
   TextEditingController _clubLongitudeController = TextEditingController();
   File _imageChoosen;
+
+  BaseAuth _auth = Auth();
+
+  Future<String> _userId ()async{
+    FirebaseUser _user = await _auth.getCurrentUser();
+    return _user.uid;
+  }
 
 
   @override
@@ -127,8 +136,8 @@ class _ClubCreateState extends State<ClubCreate> {
                     color: Colors.blue,
                     minWidth: 300,
                     child: Text("Create"),
-                    onPressed: (){
-                      
+                    onPressed: () async{
+                      String _id = await _userId();
                       // 
                       // upload image first
                       clubModule.uploadImage(_imageChoosen).then((url){
@@ -137,6 +146,7 @@ class _ClubCreateState extends State<ClubCreate> {
                           position: LatLng(double.parse(_clubLatitudeController.text), double.parse(_clubLongitudeController.text)),
                           locationLabel: _clubLocationLabelController.text,
                           image: url,
+                          users: [_id]
                         );
 
                         clubModule.createClub(_newClub);
