@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:club/modals/club_modal.dart';
 import 'package:club/modals/event_model.dart';
+import 'package:club/modals/preoder_modal.dart';
 import 'package:club/modals/product_modal.dart';
 import 'package:club/modals/reservation_modal.dart';
 import 'package:club/modals/table_modal.dart';
@@ -476,7 +477,6 @@ class _ClubReservationsState extends State<ClubReservations> {
     return Consumer<ReservationModule>(
       builder: (context, reservationModule, _){
         List<ReservationModal> _reservations = reservationModule.currenClubReservation(widget.clubId);
-
         return ListView.builder(
           itemCount: _reservations.length,
           itemBuilder: (BuildContext context, int index){
@@ -489,16 +489,64 @@ class _ClubReservationsState extends State<ClubReservations> {
                 ],
               );
             }
-            return Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  _row('User', _reservations[index].user),
-                  _row('DateBooked', _reservations[index].dateTimeBooked),
-                  _row('ResercationDate', _reservations[index].reserveDateTime),
-                  _row('Table', _reservations[index].table.label),
-                  _row('No. of Chairs', _reservations[index].noChairs),
-                ],
+            return InkWell(
+              onTap: (){
+                print("object");
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    List<OderItemModal> _oderItems = _reservations[index].preoderModal.orderItems;
+                    return Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _oderItems != null ? _oderItems.length : 0,
+                            itemBuilder: (BuildContext context, int index){
+                              return Card(
+                                child: Column(
+                                  children: <Widget>[
+                                    _row("product id", _oderItems[index].product.id),
+                                    _row("product name", _oderItems[index].product.name),
+                                    _row("product price", _oderItems[index].product.price),
+                                    _row("Quantity", _oderItems[index].quantity),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Total Cost',
+                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(width: 20,),
+                              Text(
+                                _reservations[index].preoderModal.totalAmount.toString(),
+                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                );
+              },
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _row('User Id', _reservations[index].user),
+                    _row('DateBooked', _reservations[index].dateTimeBooked),
+                    _row('ResercationDate', _reservations[index].reserveDateTime),
+                    _row('Table', _reservations[index].table.label),
+                    _row('No. of Chairs', _reservations[index].noChairs),
+                  ],
+                ),
               ),
             );
           },
