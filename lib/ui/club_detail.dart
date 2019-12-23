@@ -9,6 +9,7 @@ import 'package:club/modals/table_modal.dart';
 import 'package:club/modules/club_module.dart';
 import 'package:club/modules/event_module.dart';
 import 'package:club/modules/reservation_module.dart';
+import 'package:club/modules/user_module.dart';
 import 'package:club/ui/create_event.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -472,6 +473,7 @@ class ClubReservations extends StatefulWidget {
 }
 
 class _ClubReservationsState extends State<ClubReservations> {
+  UserModule _userModule = UserModule();
   @override
   Widget build(BuildContext context) {
     return Consumer<ReservationModule>(
@@ -490,8 +492,8 @@ class _ClubReservationsState extends State<ClubReservations> {
               );
             }
             return InkWell(
-              onTap: (){
-                print("object");
+              onTap: ()async{
+                final Map<String, dynamic> _userMap = await _userModule.getUser(_reservations[index].user);
                 showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context){
@@ -516,17 +518,54 @@ class _ClubReservationsState extends State<ClubReservations> {
                           ),
                         ),
                         Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: Column(
                             children: <Widget>[
-                              Text(
-                                'Total Cost',
-                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Username: ',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    _userMap != null ? _userMap['username'] : "null",
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 20,),
-                              Text(
-                                _reservations[index].preoderModal.totalAmount.toString(),
-                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Email: ',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    _userMap != null ? _userMap['email'] : "null",
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'Table: ',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    _reservations[index].table.label,
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  
+                                  SizedBox(width: 20,),
+                                  Text(
+                                    _reservations[index].preoderModal.totalAmount.toString(),
+                                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

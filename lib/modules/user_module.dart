@@ -1,34 +1,22 @@
-import 'package:club/modals/user_modal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 
 class UserModule extends ChangeNotifier{
-  //List<UserModal> _users;
 
-  // dummy data
-  List<UserModal> _users = [
-    UserModal(id:'1', username: 'foo 1'),
-    UserModal(id:'2', username: 'foo 2'),
-    UserModal(id:'3', username: 'foo 3'),
-  ];
 
-  get users => _users;
+  final databaseReference = Firestore.instance;
 
-  get currentUser => (index) {_users[index];};
-
-  set addUser(UserModal user){
-    _users.add(user);
-    notifyListeners();
+  Future<Map<String, dynamic>> getUser(String id) async{
+    DocumentSnapshot r = await databaseReference.document('users/$id').get();
+    if(r.data == null){
+      return null;
+    } else {
+      return {
+        'username': r.data['username'],
+        'email': r.data['email'],
+      };
+    }
   }
-
-  // id is preffered since each user will have a unique id/key
-  // set removeUser(int index)
-  set removeUser(int index){
-    _users.removeAt(index);
-  }
-
-
-
-
 
 }

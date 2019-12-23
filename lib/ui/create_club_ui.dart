@@ -6,9 +6,7 @@ import 'package:club/modules/club_module.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:keyboard_avoider/keyboard_avoider.dart';
 import 'package:provider/provider.dart';
 
 class ClubCreate extends StatefulWidget {
@@ -17,9 +15,8 @@ class ClubCreate extends StatefulWidget {
 }
 
 class _ClubCreateState extends State<ClubCreate> {
-  Geolocator _geolocator = Geolocator();
 
-  Position _userLocation;
+  // Position _userLocation;
 
   TextEditingController _clubNameController = TextEditingController();
   TextEditingController _clubLocationLabelController = TextEditingController();
@@ -42,8 +39,7 @@ class _ClubCreateState extends State<ClubCreate> {
       builder: (context) => ClubModule(),
       child: Consumer<ClubModule>(
         builder: (context, clubModule, _){
-          return KeyboardAvoider(
-            child: SingleChildScrollView(
+          return SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -94,19 +90,6 @@ class _ClubCreateState extends State<ClubCreate> {
                         ),
                       ),
                       SizedBox(width: 10,),
-                      MaterialButton(
-                        height: 90,
-                        color: Colors.grey,
-                        onPressed: (){
-                          _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((position){
-                            setState(() {
-                              _clubLatitudeController.text = position.latitude.toString();  
-                              _clubLongitudeController.text = position.longitude.toString();
-                            });
-                          });
-                        },
-                        child: Text('Pick\ncurrent location', textAlign: TextAlign.center,),
-                      ),
                     
                     ],
                   ),
@@ -160,8 +143,7 @@ class _ClubCreateState extends State<ClubCreate> {
 
                 ],
               ),
-            ),
-          );
+            );
         },
       ),
     );

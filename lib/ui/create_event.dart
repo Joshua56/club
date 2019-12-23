@@ -6,7 +6,6 @@ import 'package:club/modules/club_module.dart';
 import 'package:club/modules/event_module.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:keyboard_avoider/keyboard_avoider.dart';
 import 'package:provider/provider.dart';
 
 class EventCreate extends StatefulWidget {
@@ -35,8 +34,7 @@ class _EventCreateState extends State<EventCreate> {
       ],
       child: Consumer<EventModule>(
         builder: (context, eventModule, _){
-          return KeyboardAvoider(
-            child: SingleChildScrollView(
+          return SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -120,8 +118,7 @@ class _EventCreateState extends State<EventCreate> {
 
                 ],
               ),
-            ),
-          );
+            );
         },
       ),
     );
